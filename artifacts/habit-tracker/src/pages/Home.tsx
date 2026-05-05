@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { format, addDays, subDays, isToday } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Plus, ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
@@ -9,32 +9,57 @@ import { RoutineForm } from "@/components/RoutineForm";
 import { HomeCalendarModal } from "@/components/HomeCalendarModal";
 
 export default function Home() {
-  const { routines, addRoutine, toggleDate } = useRoutines();
+  const { routines, addRoutine, toggleDate, reorderRoutines } = useRoutines();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
+  // Drag state
+  const draggedId = useRef<string | null>(null);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
+
   const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
 
-  // Move back one week
-  const handlePrevWeek = () => {
-    setSelectedDate((d) => subDays(d, 7));
+  const handlePrevWeek = () => setSelectedDate((d) => subDays(d, 7));
+  const handleNextWeek = () => setSelectedDate((d) => addDays(d, 7));
+  const handleSelectDate = (date: Date) => setSelectedDate(date);
+
+  // Drag handlers
+  const handleDragStart = (id: string) => (e: React.DragEvent) => {
+    draggedId.current = id;
+    setDraggingId(id);
+    e.dataTransfer.effectAllowed = "move";
+    // needed for Firefox
+    e.dataTransfer.setData("text/plain", id);
   };
 
-  // Move forward one week
-  const handleNextWeek = () => {
-    setSelectedDate((d) => addDays(d, 7));
+  const handleDragOver = (id: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (draggedId.current !== id) {
+      setDragOverId(id);
+    }
   };
 
-  // When a date is selected from any source (weekly bar or calendar modal)
-  const handleSelectDate = (date: Date) => {
-    setSelectedDate(date);
+  const handleDrop = (id: string) => (e: React.DragEvent) => {
+    e.preventDefault();
+    if (draggedId.current && draggedId.current !== id) {
+      reorderRoutines(draggedId.current, id);
+    }
+    setDragOverId(null);
+  };
+
+  const handleDragEnd = () => {
+    draggedId.current = null;
+    setDraggingId(null);
+    setDragOverId(null);
   };
 
   return (
     <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-24 flex flex-col font-sans">
       <header className="px-6 pt-12 pb-2 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
-        {/* Month navigation row */}
+        {/* Week navigation row */}
         <div className="flex items-center justify-between mb-1">
           <button
             onClick={handlePrevWeek}
@@ -107,6 +132,12 @@ export default function Home() {
                 routine={routine}
                 selectedDateStr={selectedDateStr}
                 onToggle={toggleDate}
+                isDragging={draggingId === routine.id}
+                isDragOver={dragOverId === routine.id}
+                onDragStart={handleDragStart(routine.id)}
+                onDragOver={handleDragOver(routine.id)}
+                onDrop={handleDrop(routine.id)}
+                onDragEnd={handleDragEnd}
               />
             ))}
           </div>

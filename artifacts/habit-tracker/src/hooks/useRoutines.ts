@@ -69,11 +69,25 @@ export function useRoutines() {
     });
   }, []);
 
+  const reorderRoutines = useCallback((fromId: string, toId: string) => {
+    setRoutines(prev => {
+      const fromIndex = prev.findIndex(r => r.id === fromId);
+      const toIndex = prev.findIndex(r => r.id === toId);
+      if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return prev;
+      const updated = [...prev];
+      const [moved] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, moved);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   return {
     routines,
     addRoutine,
     updateRoutine,
     deleteRoutine,
-    toggleDate
+    toggleDate,
+    reorderRoutines,
   };
 }
