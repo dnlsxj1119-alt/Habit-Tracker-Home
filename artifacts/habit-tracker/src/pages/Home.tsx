@@ -144,50 +144,50 @@ export default function Home() {
           </span>
         </div>
 
-        {/* Category completion summary (only shown if routines exist) */}
-        {routines.length > 0 && categoryStats.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {categoryStats.map(({ cat, total, completed }) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat as Category)}
-                data-testid={`button-summary-${cat}`}
-                className={`flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all
-                  ${CATEGORY_SUMMARY_COLORS[cat] || "text-gray-600 bg-gray-50 border-gray-200"}
-                  ${selectedCategory === cat ? "ring-2 ring-offset-1 ring-current opacity-100" : "opacity-80 hover:opacity-100"}`}
-              >
-                <span>{cat}</span>
-                <span className={`font-extrabold ${completed === total && total > 0 ? "opacity-100" : "opacity-70"}`}>
-                  {completed}/{total}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Category filter tabs */}
+        {/* Combined category chips: 전체 + per-category, with filter + completion stats */}
         {routines.length > 0 && (
           <div className="flex overflow-x-auto gap-2 pb-1 scrollbar-hide -mx-1 px-1">
-            {ALL_CATEGORIES.filter(cat => categoryCounts[cat] > 0 || cat === "전체").map(cat => {
+            {/* 전체 chip */}
+            {(() => {
+              const totalCompleted = routines.filter(r => r.completedDates.includes(selectedDateStr)).length;
+              const isActive = selectedCategory === "전체";
+              return (
+                <button
+                  key="전체"
+                  onClick={() => setSelectedCategory("전체")}
+                  data-testid="button-chip-전체"
+                  className={`shrink-0 flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all
+                    ${isActive
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20"
+                      : "bg-secondary text-muted-foreground border-border hover:text-foreground hover:border-primary/30"
+                    }`}
+                >
+                  <span>전체</span>
+                  <span className={`font-extrabold ${isActive ? "opacity-90" : "opacity-70"}`}>
+                    {totalCompleted}/{routines.length}
+                  </span>
+                </button>
+              );
+            })()}
+
+            {/* Per-category chips (only categories that have routines) */}
+            {categoryStats.map(({ cat, total, completed }) => {
               const isActive = selectedCategory === cat;
               return (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  data-testid={`button-filter-${cat}`}
-                  className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-all
+                  onClick={() => setSelectedCategory(cat as Category)}
+                  data-testid={`button-chip-${cat}`}
+                  className={`shrink-0 flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all
                     ${isActive
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/30"
-                      : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20"
+                      : `${CATEGORY_SUMMARY_COLORS[cat] || "text-gray-600 bg-gray-50 border-gray-200"} hover:opacity-100 opacity-80`
                     }`}
                 >
                   <span>{cat}</span>
-                  {categoryCounts[cat] > 0 && (
-                    <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full
-                      ${isActive ? "bg-white/20 text-white" : "bg-secondary text-muted-foreground"}`}>
-                      {categoryCounts[cat]}
-                    </span>
-                  )}
+                  <span className={`font-extrabold ${isActive ? "opacity-90" : completed === total ? "opacity-100" : "opacity-70"}`}>
+                    {completed}/{total}
+                  </span>
                 </button>
               );
             })}
