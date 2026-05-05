@@ -4,7 +4,8 @@ import { ChevronLeft, Pencil, Trash2 } from "lucide-react";
 import { useRoutines } from "@/hooks/useRoutines";
 import { MonthlyCalendar } from "@/components/MonthlyCalendar";
 import { RoutineForm } from "@/components/RoutineForm";
-import { getDaysInMonth, isSameMonth, parseISO } from "date-fns";
+import { getDaysInMonth, isSameMonth, parseISO, startOfMonth, format } from "date-fns";
+import { ko } from "date-fns/locale";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,7 @@ export default function RoutineDetail() {
   
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()));
 
   const routine = routines.find(r => r.id === id);
 
@@ -45,14 +47,13 @@ export default function RoutineDetail() {
     updateRoutine(routine.id, data);
   };
 
-  // Calculate completion rate for the current month
-  const today = new Date();
-  const daysInMonth = getDaysInMonth(today);
-  const completedInCurrentMonth = routine.completedDates.filter(dateStr => {
-    return isSameMonth(parseISO(dateStr), today);
-  });
-  
-  const completionRate = Math.round((completedInCurrentMonth.length / daysInMonth) * 100);
+  // Calculate completion rate based on the currently viewed month in the calendar
+  const daysInMonth = getDaysInMonth(currentMonth);
+  const completedInMonth = routine.completedDates.filter(dateStr =>
+    isSameMonth(parseISO(dateStr), currentMonth)
+  );
+  const completionRate = Math.round((completedInMonth.length / daysInMonth) * 100);
+  const monthLabel = format(currentMonth, "M월", { locale: ko });
 
   return (
     <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl flex flex-col relative pb-12 font-sans">
@@ -95,16 +96,21 @@ export default function RoutineDetail() {
           )}
         </div>
 
-        <MonthlyCalendar routine={routine} onToggle={toggleDate} />
+        <MonthlyCalendar
+          routine={routine}
+          onToggle={toggleDate}
+          currentMonth={currentMonth}
+          onMonthChange={setCurrentMonth}
+        />
 
         <div className="bg-primary/5 border border-primary/20 rounded-3xl p-6 shadow-sm">
           <div className="flex justify-between items-end mb-4">
-            <h3 className="text-sm font-bold text-primary">이번 달 완료율</h3>
+            <h3 className="text-sm font-bold text-primary">{monthLabel} 완료율</h3>
             <span className="text-3xl font-extrabold text-primary tracking-tighter">{completionRate}%</span>
           </div>
           <Progress value={completionRate} className="h-4 rounded-full bg-primary/20" />
           <p className="text-xs font-semibold text-primary/70 mt-3 text-right">
-            {daysInMonth}일 중 {completedInCurrentMonth.length}일 완료
+            {daysInMonth}일 중 {completedInMonth.length}일 완료
           </p>
         </div>
       </main>

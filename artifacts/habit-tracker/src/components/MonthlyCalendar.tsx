@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, isSameMonth, isSameDay, eachDayOfInterval } from "date-fns";
 import { ko } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -7,10 +6,11 @@ import { Routine } from "@/types/routine";
 interface Props {
   routine: Routine;
   onToggle: (id: string, date: string) => void;
+  currentMonth: Date;
+  onMonthChange: (month: Date) => void;
 }
 
-export function MonthlyCalendar({ routine, onToggle }: Props) {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+export function MonthlyCalendar({ routine, onToggle, currentMonth, onMonthChange }: Props) {
   
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
@@ -21,8 +21,8 @@ export function MonthlyCalendar({ routine, onToggle }: Props) {
   const days = eachDayOfInterval({ start: startDate, end: endDate });
   const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 
-  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+  const nextMonth = () => onMonthChange(addMonths(currentMonth, 1));
+  const prevMonth = () => onMonthChange(subMonths(currentMonth, 1));
 
   return (
     <div className="bg-card rounded-3xl p-5 shadow-sm border border-border">
