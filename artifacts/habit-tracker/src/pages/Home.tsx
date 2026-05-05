@@ -8,9 +8,22 @@ import { RoutineCard } from "@/components/RoutineCard";
 import { RoutineForm } from "@/components/RoutineForm";
 import { HomeCalendarModal } from "@/components/HomeCalendarModal";
 
+const ALL_CATEGORIES = ["전체", "건강", "운동", "학습", "마음", "생활", "기타"] as const;
+type Category = typeof ALL_CATEGORIES[number];
+
+const CATEGORY_SUMMARY_COLORS: Record<string, string> = {
+  "건강": "text-red-600 bg-red-50 border-red-100",
+  "운동": "text-blue-600 bg-blue-50 border-blue-100",
+  "학습": "text-purple-600 bg-purple-50 border-purple-100",
+  "마음": "text-amber-600 bg-amber-50 border-amber-100",
+  "생활": "text-teal-600 bg-teal-50 border-teal-100",
+  "기타": "text-gray-600 bg-gray-50 border-gray-200",
+};
+
 export default function Home() {
   const { routines, addRoutine, toggleDate, reorderRoutines } = useRoutines();
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedCategory, setSelectedCategory] = useState<Category>("전체");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -30,16 +43,13 @@ export default function Home() {
     draggedId.current = id;
     setDraggingId(id);
     e.dataTransfer.effectAllowed = "move";
-    // needed for Firefox
     e.dataTransfer.setData("text/plain", id);
   };
 
   const handleDragOver = (id: string) => (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
-    if (draggedId.current !== id) {
-      setDragOverId(id);
-    }
+    if (draggedId.current !== id) setDragOverId(id);
   };
 
   const handleDrop = (id: string) => (e: React.DragEvent) => {
@@ -56,10 +66,31 @@ export default function Home() {
     setDragOverId(null);
   };
 
+  // Category counts (all routines, not filtered by date)
+  const categoryCounts = ALL_CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
+    acc[cat] = cat === "전체"
+      ? routines.length
+      : routines.filter(r => r.category === cat).length;
+    return acc;
+  }, {});
+
+  // Filtered list for display
+  const filteredRoutines = selectedCategory === "전체"
+    ? routines
+    : routines.filter(r => r.category === selectedCategory);
+
+  // Category completion summary for selected date (only categories that have routines)
+  const categoryStats = ALL_CATEGORIES.filter(c => c !== "전체").map(cat => {
+    const inCategory = routines.filter(r => r.category === cat);
+    if (inCategory.length === 0) return null;
+    const completed = inCategory.filter(r => r.completedDates.includes(selectedDateStr)).length;
+    return { cat, total: inCategory.length, completed };
+  }).filter(Boolean) as { cat: string; total: number; completed: number }[];
+
   return (
     <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-24 flex flex-col font-sans">
       <header className="px-6 pt-12 pb-2 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
-        {/* Week navigation row */}
+        {/* Week navigation */}
         <div className="flex items-center justify-between mb-1">
           <button
             onClick={handlePrevWeek}
@@ -68,11 +99,9 @@ export default function Home() {
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
             {format(selectedDate, "yyyy년 M월", { locale: ko })}
           </h1>
-
           <button
             onClick={handleNextWeek}
             data-testid="button-next-week"
@@ -82,7 +111,7 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Calendar button row */}
+        {/* Calendar view button */}
         <div className="flex justify-center pb-1">
           <button
             onClick={() => setIsCalendarOpen(true)}
@@ -99,8 +128,9 @@ export default function Home() {
         <WeeklyDateBar selectedDate={selectedDate} onSelectDate={handleSelectDate} />
       </div>
 
-      <main className="flex-1 px-6 pt-4 flex flex-col gap-4">
-        <div className="flex items-center justify-between mb-2">
+      <main className="flex-1 px-6 pt-2 flex flex-col gap-3">
+        {/* Date title */}
+        <div className="flex items-center justify-between pt-2">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-foreground">
               {isToday(selectedDate) ? "오늘의 루틴" : format(selectedDate, "M월 d일 루틴", { locale: ko })}
@@ -110,23 +140,88 @@ export default function Home() {
             </p>
           </div>
           <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
-            {routines.length}개
+            {filteredRoutines.length}개
           </span>
         </div>
 
-        {routines.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
+        {/* Category completion summary (only shown if routines exist) */}
+        {routines.length > 0 && categoryStats.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {categoryStats.map(({ cat, total, completed }) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat as Category)}
+                data-testid={`button-summary-${cat}`}
+                className={`flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full border transition-all
+                  ${CATEGORY_SUMMARY_COLORS[cat] || "text-gray-600 bg-gray-50 border-gray-200"}
+                  ${selectedCategory === cat ? "ring-2 ring-offset-1 ring-current opacity-100" : "opacity-80 hover:opacity-100"}`}
+              >
+                <span>{cat}</span>
+                <span className={`font-extrabold ${completed === total && total > 0 ? "opacity-100" : "opacity-70"}`}>
+                  {completed}/{total}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Category filter tabs */}
+        {routines.length > 0 && (
+          <div className="flex overflow-x-auto gap-2 pb-1 scrollbar-hide -mx-1 px-1">
+            {ALL_CATEGORIES.filter(cat => categoryCounts[cat] > 0 || cat === "전체").map(cat => {
+              const isActive = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  data-testid={`button-filter-${cat}`}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-all
+                    ${isActive
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/30"
+                      : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                    }`}
+                >
+                  <span>{cat}</span>
+                  {categoryCounts[cat] > 0 && (
+                    <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded-full
+                      ${isActive ? "bg-white/20 text-white" : "bg-secondary text-muted-foreground"}`}>
+                      {categoryCounts[cat]}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Routine list */}
+        {filteredRoutines.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="w-20 h-20 bg-secondary rounded-full flex items-center justify-center mb-6 shadow-inner">
               <Plus className="w-10 h-10 text-muted-foreground/50" />
             </div>
-            <h3 className="text-xl font-bold mb-2 text-foreground">루틴이 없습니다</h3>
-            <p className="text-sm text-muted-foreground max-w-[200px] leading-relaxed">
-              오른쪽 아래 버튼을 눌러<br />새로운 루틴을 추가해보세요.
-            </p>
+            {routines.length === 0 ? (
+              <>
+                <h3 className="text-xl font-bold mb-2 text-foreground">루틴이 없습니다</h3>
+                <p className="text-sm text-muted-foreground max-w-[200px] leading-relaxed">
+                  오른쪽 아래 버튼을 눌러<br />새로운 루틴을 추가해보세요.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold mb-2 text-foreground">{selectedCategory} 루틴이 없습니다</h3>
+                <button
+                  onClick={() => setSelectedCategory("전체")}
+                  className="text-sm font-semibold text-primary bg-primary/10 px-4 py-2 rounded-full hover:bg-primary/20 transition-colors"
+                >
+                  전체 보기
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div className="flex flex-col gap-3">
-            {routines.map((routine) => (
+            {filteredRoutines.map((routine) => (
               <RoutineCard
                 key={routine.id}
                 routine={routine}
@@ -148,7 +243,7 @@ export default function Home() {
       <button
         onClick={() => setIsFormOpen(true)}
         data-testid="button-add-routine"
-        className="fixed bottom-8 right-1/2 translate-x-[160px] w-16 h-16 bg-primary text-primary-foreground rounded-[24px] shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20"
+        className="fixed bottom-8 right-1/2 w-16 h-16 bg-primary text-primary-foreground rounded-[24px] shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20"
         style={{ transform: "translateX(calc(min(430px, 100vw)/2 - 4.5rem))" }}
       >
         <Plus className="w-8 h-8" />
