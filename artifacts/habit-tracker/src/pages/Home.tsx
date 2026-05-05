@@ -3,13 +3,11 @@ import { format, addDays, subDays, isToday } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Plus, ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { useRoutines } from "@/hooks/useRoutines";
+import { useCategories } from "@/hooks/useCategories";
 import { WeeklyDateBar } from "@/components/WeeklyDateBar";
 import { RoutineCard } from "@/components/RoutineCard";
 import { RoutineForm } from "@/components/RoutineForm";
 import { HomeCalendarModal } from "@/components/HomeCalendarModal";
-
-const ALL_CATEGORIES = ["전체", "건강", "운동", "학습", "마음", "생활", "기타"] as const;
-type Category = typeof ALL_CATEGORIES[number];
 
 const CATEGORY_SUMMARY_COLORS: Record<string, string> = {
   "건강": "text-red-600 bg-red-50 border-red-100",
@@ -22,8 +20,9 @@ const CATEGORY_SUMMARY_COLORS: Record<string, string> = {
 
 export default function Home() {
   const { routines, addRoutine, toggleDate, reorderRoutines } = useRoutines();
+  const { categories } = useCategories();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedCategory, setSelectedCategory] = useState<Category>("전체");
+  const [selectedCategory, setSelectedCategory] = useState<string>("전체");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -66,21 +65,13 @@ export default function Home() {
     setDragOverId(null);
   };
 
-  // Category counts (all routines, not filtered by date)
-  const categoryCounts = ALL_CATEGORIES.reduce<Record<string, number>>((acc, cat) => {
-    acc[cat] = cat === "전체"
-      ? routines.length
-      : routines.filter(r => r.category === cat).length;
-    return acc;
-  }, {});
-
   // Filtered list for display
   const filteredRoutines = selectedCategory === "전체"
     ? routines
     : routines.filter(r => r.category === selectedCategory);
 
-  // Category completion summary for selected date (only categories that have routines)
-  const categoryStats = ALL_CATEGORIES.filter(c => c !== "전체").map(cat => {
+  // Category completion summary for selected date (only categories that have routines, in dynamic order)
+  const categoryStats = categories.map(cat => {
     const inCategory = routines.filter(r => r.category === cat);
     if (inCategory.length === 0) return null;
     const completed = inCategory.filter(r => r.completedDates.includes(selectedDateStr)).length;
