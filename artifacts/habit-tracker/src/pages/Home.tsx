@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { format, addMonths, subMonths, startOfMonth, isSameMonth, isToday } from "date-fns";
+import { format, addDays, subDays, isToday } from "date-fns";
 import { ko } from "date-fns/locale";
 import { Plus, ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { useRoutines } from "@/hooks/useRoutines";
@@ -15,24 +15,15 @@ export default function Home() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
-  const today = new Date();
 
-  // Move to previous month: jump selectedDate to 1st of prev month
-  // (if currently on today's month, keep today otherwise use 1st)
-  const handlePrevMonth = () => {
-    const prevMonth = subMonths(selectedDate, 1);
-    const firstOfPrev = startOfMonth(prevMonth);
-    setSelectedDate(firstOfPrev);
+  // Move back one week
+  const handlePrevWeek = () => {
+    setSelectedDate((d) => subDays(d, 7));
   };
 
-  // Move to next month: jump to 1st of next month, or today if that's current month
-  const handleNextMonth = () => {
-    const nextMonth = addMonths(selectedDate, 1);
-    if (isSameMonth(nextMonth, today)) {
-      setSelectedDate(today);
-    } else {
-      setSelectedDate(startOfMonth(nextMonth));
-    }
+  // Move forward one week
+  const handleNextWeek = () => {
+    setSelectedDate((d) => addDays(d, 7));
   };
 
   // When a date is selected from any source (weekly bar or calendar modal)
@@ -46,8 +37,8 @@ export default function Home() {
         {/* Month navigation row */}
         <div className="flex items-center justify-between mb-1">
           <button
-            onClick={handlePrevMonth}
-            data-testid="button-prev-month"
+            onClick={handlePrevWeek}
+            data-testid="button-prev-week"
             className="p-2 -ml-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -58,8 +49,8 @@ export default function Home() {
           </h1>
 
           <button
-            onClick={handleNextMonth}
-            data-testid="button-next-month"
+            onClick={handleNextWeek}
+            data-testid="button-next-week"
             className="p-2 -mr-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
