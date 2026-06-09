@@ -79,8 +79,8 @@ export default function Home() {
   }).filter(Boolean) as { cat: string; total: number; completed: number }[];
 
   return (
-    <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-24 flex flex-col font-sans">
-      <header className="px-6 pt-12 pb-2 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
+    <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-16 flex flex-col font-sans">
+      <header className="px-6 pt-8 pb-1 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
         {/* Week navigation */}
         <div className="flex items-center justify-between mb-1">
           <button
@@ -90,7 +90,7 @@ export default function Home() {
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-extrabold tracking-tight text-foreground">
+          <h1 className="text-lg font-bold tracking-tight text-foreground">
             {format(selectedDate, "yyyy년 M월", { locale: ko })}
           </h1>
           <button
@@ -119,25 +119,25 @@ export default function Home() {
         <WeeklyDateBar selectedDate={selectedDate} onSelectDate={handleSelectDate} />
       </div>
 
-      <main className="flex-1 px-6 pt-2 flex flex-col gap-3">
+      <main className="flex-1 px-4 pt-1 flex flex-col gap-2">
         {/* Date title */}
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-1">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-foreground">
+            <h2 className="text-base font-semibold tracking-tight text-foreground">
               {isToday(selectedDate) ? "오늘의 루틴" : format(selectedDate, "M월 d일 루틴", { locale: ko })}
             </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
+            <p className="text-[11px] text-muted-foreground mt-0.5">
               {format(selectedDate, "yyyy년 M월 d일 EEEE", { locale: ko })}
             </p>
           </div>
-          <span className="text-sm font-semibold text-primary bg-primary/10 px-3 py-1 rounded-full">
+          <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
             {filteredRoutines.length}개
           </span>
         </div>
 
         {/* Combined category chips: 전체 + per-category, with filter + completion stats */}
         {routines.length > 0 && (
-          <div className="flex overflow-x-auto gap-2 pb-1 scrollbar-hide -mx-1 px-1">
+          <div className="flex overflow-x-auto gap-1.5 pb-0.5 scrollbar-hide -mx-1 px-1">
             {/* 전체 chip */}
             {(() => {
               const totalCompleted = routines.filter(r => r.completedDates.includes(selectedDateStr)).length;
@@ -147,7 +147,7 @@ export default function Home() {
                   key="전체"
                   onClick={() => setSelectedCategory("전체")}
                   data-testid="button-chip-전체"
-                  className={`shrink-0 flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all
+                  className={`shrink-0 flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all
                     ${isActive
                       ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20"
                       : "bg-secondary text-muted-foreground border-border hover:text-foreground hover:border-primary/30"
@@ -169,7 +169,7 @@ export default function Home() {
                   key={cat}
                   onClick={() => setSelectedCategory(cat as Category)}
                   data-testid={`button-chip-${cat}`}
-                  className={`shrink-0 flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-full border transition-all
+                  className={`shrink-0 flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all
                     ${isActive
                       ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20"
                       : `${CATEGORY_SUMMARY_COLORS[cat] || "text-gray-600 bg-gray-50 border-gray-200"} hover:opacity-100 opacity-80`
@@ -211,7 +211,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1.5">
             {filteredRoutines.map((routine) => (
               <RoutineCard
                 key={routine.id}
@@ -234,10 +234,10 @@ export default function Home() {
       <button
         onClick={() => setIsFormOpen(true)}
         data-testid="button-add-routine"
-        className="fixed bottom-8 right-1/2 w-16 h-16 bg-primary text-primary-foreground rounded-[24px] shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20"
-        style={{ transform: "translateX(calc(min(430px, 100vw)/2 - 4.5rem))" }}
+        className="fixed bottom-5 right-1/2 w-12 h-12 bg-primary text-primary-foreground rounded-[16px] shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20"
+        style={{ transform: "translateX(calc(min(430px, 100vw)/2 - 3.5rem))" }}
       >
-        <Plus className="w-8 h-8" />
+        <Plus className="w-5 h-5" />
       </button>
 
       <RoutineForm

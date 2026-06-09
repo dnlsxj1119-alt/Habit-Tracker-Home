@@ -45,7 +45,7 @@ export function RoutineCard({
       onDragEnd={onDragEnd}
       data-testid={`card-routine-${routine.id}`}
       className={[
-        "bg-card rounded-2xl p-4 shadow-sm border flex items-center gap-3 transition-all duration-200 select-none",
+        "bg-card rounded-xl p-2.5 shadow-sm border flex items-center gap-2 transition-all duration-200 select-none",
         isDragging ? "opacity-40 scale-[0.98] border-primary/40 shadow-none" : "border-border",
         isDragOver ? "border-primary border-2 shadow-md shadow-primary/10 scale-[1.01]" : "",
       ].join(" ")}
@@ -66,13 +66,13 @@ export function RoutineCard({
           onToggle(routine.id, selectedDateStr);
         }}
         onMouseDown={(e) => e.stopPropagation()}
-        className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300
+        className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300
           ${isCompleted
             ? "bg-primary text-primary-foreground shadow-sm shadow-primary/40"
             : "bg-secondary border border-border text-transparent hover:bg-secondary/80"
           }`}
       >
-        <Check className="w-5 h-5" />
+        <Check className="w-3.5 h-3.5" />
       </button>
 
       {/* Routine info + detail link */}
@@ -83,9 +83,9 @@ export function RoutineCard({
         onMouseDown={(e) => e.stopPropagation()}
         className="flex-1 flex items-center min-w-0 group"
       >
-        <div className="flex flex-col flex-1 min-w-0 pr-4">
+        <div className="flex flex-col flex-1 min-w-0 pr-2">
           <span
-            className={`text-base font-semibold truncate transition-colors duration-300 ${
+            className={`text-sm font-medium truncate transition-colors duration-300 ${
               isCompleted ? "text-muted-foreground line-through" : "text-foreground"
             }`}
           >
@@ -93,7 +93,7 @@ export function RoutineCard({
           </span>
           {routine.category && (
             <span
-              className={`text-[10px] font-bold px-2 py-0.5 rounded-full w-fit mt-1.5 border ${
+              className={`text-[9px] font-semibold px-1.5 py-px rounded-full w-fit mt-0.5 border ${
                 CATEGORY_COLORS[routine.category] || "bg-gray-50 text-gray-600 border-gray-200"
               }`}
             >
@@ -101,7 +101,7 @@ export function RoutineCard({
             </span>
           )}
         </div>
-        <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
+        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors shrink-0" />
       </Link>
     </div>
   );

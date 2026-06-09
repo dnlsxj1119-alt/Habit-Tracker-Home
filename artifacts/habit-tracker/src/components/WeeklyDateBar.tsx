@@ -13,7 +13,7 @@ export function WeeklyDateBar({ selectedDate, onSelectDate }: Props) {
   const days = Array.from({ length: 7 }, (_, i) => addDays(subDays(selectedDate, 3), i));
 
   return (
-    <div className="flex overflow-x-auto gap-2 py-4 px-2 scrollbar-hide snap-x snap-mandatory">
+    <div className="flex overflow-x-auto gap-1.5 py-2 px-2 scrollbar-hide snap-x snap-mandatory">
       {days.map((date) => {
         const isSelected = isSameDay(date, selectedDate);
         const isToday = isSameDay(date, today);
@@ -24,17 +24,17 @@ export function WeeklyDateBar({ selectedDate, onSelectDate }: Props) {
             onClick={() => onSelectDate(date)}
             data-testid={`button-weekday-${format(date, "yyyy-MM-dd")}`}
             className={[
-              "snap-center shrink-0 flex flex-col items-center justify-center w-12 h-16 rounded-full transition-colors relative",
+              "snap-center shrink-0 flex flex-col items-center justify-center w-10 h-12 rounded-full transition-colors relative",
               isSelected
                 ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
                 : "bg-card text-foreground hover:bg-secondary border border-border",
               isToday && !isSelected ? "ring-2 ring-primary/40" : "",
             ].join(" ")}
           >
-            <span className="text-xs font-semibold uppercase mb-1">
+            <span className="text-[10px] font-semibold uppercase mb-0.5">
               {format(date, "E", { locale: ko })}
             </span>
-            <span className="text-base font-bold">{format(date, "d")}</span>
+            <span className="text-sm font-bold">{format(date, "d")}</span>
             {isToday && (
               <span
                 className={`w-1 h-1 rounded-full absolute bottom-1.5 ${
