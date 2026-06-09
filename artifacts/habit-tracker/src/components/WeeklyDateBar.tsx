@@ -9,11 +9,10 @@ interface Props {
 export function WeeklyDateBar({ selectedDate, onSelectDate }: Props) {
   const today = new Date();
 
-  // Generate 7 days centered around the selected date (3 before, selected, 3 after)
   const days = Array.from({ length: 7 }, (_, i) => addDays(subDays(selectedDate, 3), i));
 
   return (
-    <div className="flex overflow-x-auto gap-1.5 py-2 px-2 scrollbar-hide snap-x snap-mandatory">
+    <div className="flex justify-between py-2">
       {days.map((date) => {
         const isSelected = isSameDay(date, selectedDate);
         const isToday = isSameDay(date, today);
@@ -24,7 +23,7 @@ export function WeeklyDateBar({ selectedDate, onSelectDate }: Props) {
             onClick={() => onSelectDate(date)}
             data-testid={`button-weekday-${format(date, "yyyy-MM-dd")}`}
             className={[
-              "snap-center shrink-0 flex flex-col items-center justify-center w-10 h-12 rounded-full transition-colors relative",
+              "flex flex-col items-center justify-center w-10 h-12 rounded-full transition-colors relative",
               isSelected
                 ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
                 : "bg-card text-foreground hover:bg-secondary border border-border",

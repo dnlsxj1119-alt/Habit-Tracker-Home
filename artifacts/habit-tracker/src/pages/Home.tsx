@@ -80,44 +80,44 @@ export default function Home() {
 
   return (
     <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-16 flex flex-col font-sans">
-      <header className="px-6 pt-8 pb-1 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
-        {/* Week navigation */}
-        <div className="flex items-center justify-between mb-1">
+      <header className="px-3 pt-8 pb-1 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
+        {/* Month navigation — arrows flush with date bar edges */}
+        <div className="flex items-center justify-between mb-0.5">
           <button
             onClick={handlePrevWeek}
             data-testid="button-prev-week"
-            className="p-2 -ml-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
+            className="w-10 h-8 flex items-center justify-center rounded-full hover:bg-secondary text-muted-foreground transition-colors"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
-          <h1 className="text-lg font-bold tracking-tight text-foreground">
-            {format(selectedDate, "yyyy년 M월", { locale: ko })}
-          </h1>
+
+          {/* Month title + calendar button stacked */}
+          <div className="flex flex-col items-center gap-0.5">
+            <h1 className="text-base font-bold tracking-tight text-foreground leading-none">
+              {format(selectedDate, "yyyy년 M월", { locale: ko })}
+            </h1>
+            <button
+              onClick={() => setIsCalendarOpen(true)}
+              data-testid="button-open-calendar"
+              className="flex items-center gap-1 text-[10px] font-semibold text-primary hover:text-primary/80 transition-colors"
+            >
+              <CalendarDays className="w-3 h-3" />
+              전체 달력 보기
+            </button>
+          </div>
+
           <button
             onClick={handleNextWeek}
             data-testid="button-next-week"
-            className="p-2 -mr-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors"
+            className="w-10 h-8 flex items-center justify-center rounded-full hover:bg-secondary text-muted-foreground transition-colors"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Calendar view button */}
-        <div className="flex justify-center pb-1">
-          <button
-            onClick={() => setIsCalendarOpen(true)}
-            data-testid="button-open-calendar"
-            className="flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 px-3 py-1.5 rounded-full hover:bg-primary/20 transition-colors"
-          >
-            <CalendarDays className="w-3.5 h-3.5" />
-            전체 달력 보기
-          </button>
-        </div>
-      </header>
-
-      <div className="px-4">
+        {/* Date bar — same horizontal bounds as nav arrows above */}
         <WeeklyDateBar selectedDate={selectedDate} onSelectDate={handleSelectDate} />
-      </div>
+      </header>
 
       <main className="flex-1 px-4 pt-1 flex flex-col gap-2">
         {/* Date title */}
