@@ -4,6 +4,7 @@ import { ChevronLeft, Pencil, Trash2 } from "lucide-react";
 import { useRoutines } from "@/hooks/useRoutines";
 import { MonthlyCalendar } from "@/components/MonthlyCalendar";
 import { RoutineForm } from "@/components/RoutineForm";
+import { SubOptionModal } from "@/components/SubOptionModal";
 import { getDaysInMonth, isSameMonth, parseISO, startOfMonth, format } from "date-fns";
 import { ko } from "date-fns/locale";
 import {
@@ -26,6 +27,7 @@ export default function RoutineDetail() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()));
+  const [selectedDateForSubOption, setSelectedDateForSubOption] = useState<Date | null>(null);
 
   const routine = routines.find(r => r.id === id);
 
@@ -47,13 +49,29 @@ export default function RoutineDetail() {
     updateRoutine(routine.id, data);
   };
 
-  // Calculate completion rate based on the currently viewed month in the calendar
   const daysInMonth = getDaysInMonth(currentMonth);
   const completedInMonth = routine.completedDates.filter(dateStr =>
     isSameMonth(parseISO(dateStr), currentMonth)
   );
   const completionRate = Math.round((completedInMonth.length / daysInMonth) * 100);
   const monthLabel = format(currentMonth, "M월", { locale: ko });
+
+  const subOptionCounts: Record<string, number> = {};
+  completedInMonth.forEach(dateStr => {
+    const option = routine.completedDetails?.[dateStr];
+    if (option) {
+      subOptionCounts[option] = (subOptionCounts[option] || 0) + 1;
+    }
+  });
+  const hasSubOptionsStats = Object.keys(subOptionCounts).length > 0;
+
+  const handleCalendarToggle = (id: string, dateStr: string) => {
+    if (routine.subOptions && routine.subOptions.length > 0) {
+      setSelectedDateForSubOption(parseISO(dateStr));
+    } else {
+      toggleDate(id, dateStr);
+    }
+  };
 
   return (
     <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl flex flex-col relative pb-12 font-sans">
@@ -98,7 +116,7 @@ export default function RoutineDetail() {
 
         <MonthlyCalendar
           routine={routine}
-          onToggle={toggleDate}
+          onToggle={handleCalendarToggle}
           currentMonth={currentMonth}
           onMonthChange={setCurrentMonth}
         />
@@ -113,6 +131,22 @@ export default function RoutineDetail() {
             {daysInMonth}일 중 {completedInMonth.length}일 완료
           </p>
         </div>
+
+        {hasSubOptionsStats && (
+          <div className="bg-secondary/30 border border-border/50 rounded-3xl p-6 shadow-sm">
+            <h3 className="text-sm font-bold text-foreground mb-4">{monthLabel} 하위 활동 통계</h3>
+            <div className="space-y-2">
+              {Object.entries(subOptionCounts)
+                .sort((a, b) => b[1] - a[1])
+                .map(([option, count]) => (
+                <div key={option} className="flex justify-between items-center bg-background px-4 py-3 rounded-xl border border-border/40">
+                  <span className="font-semibold text-sm text-foreground">{option}</span>
+                  <span className="font-bold text-sm text-primary bg-primary/10 px-2 py-0.5 rounded-md">{count}회</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       <RoutineForm 
@@ -138,6 +172,16 @@ export default function RoutineDetail() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {selectedDateForSubOption && (
+        <SubOptionModal
+          open={!!selectedDateForSubOption}
+          onOpenChange={(open) => !open && setSelectedDateForSubOption(null)}
+          routine={routine}
+          selectedDate={selectedDateForSubOption}
+          onSelectOption={toggleDate}
+        />
+      )}
     </div>
   );
 }

@@ -8,6 +8,8 @@ import { WeeklyDateBar } from "@/components/WeeklyDateBar";
 import { RoutineCard } from "@/components/RoutineCard";
 import { RoutineForm } from "@/components/RoutineForm";
 import { HomeCalendarModal } from "@/components/HomeCalendarModal";
+import { SubOptionModal } from "@/components/SubOptionModal";
+import { Routine } from "@/types/routine";
 
 const CATEGORY_SUMMARY_COLORS: Record<string, string> = {
   "건강": "text-red-600 bg-red-50 border-red-100",
@@ -25,6 +27,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string>("전체");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedRoutineForSubOption, setSelectedRoutineForSubOption] = useState<Routine | null>(null);
 
   // Drag state
   const draggedId = useRef<string | null>(null);
@@ -224,6 +227,7 @@ export default function Home() {
                 onDragOver={handleDragOver(routine.id)}
                 onDrop={handleDrop(routine.id)}
                 onDragEnd={handleDragEnd}
+                onOpenSubOptions={setSelectedRoutineForSubOption}
               />
             ))}
           </div>
@@ -251,6 +255,14 @@ export default function Home() {
         onOpenChange={setIsCalendarOpen}
         selectedDate={selectedDate}
         onSelectDate={handleSelectDate}
+      />
+
+      <SubOptionModal
+        open={!!selectedRoutineForSubOption}
+        onOpenChange={(open) => !open && setSelectedRoutineForSubOption(null)}
+        routine={selectedRoutineForSubOption}
+        selectedDate={selectedDate}
+        onSelectOption={toggleDate}
       />
     </div>
   );

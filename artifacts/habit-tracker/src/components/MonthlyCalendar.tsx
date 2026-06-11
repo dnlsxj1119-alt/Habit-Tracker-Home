@@ -58,14 +58,20 @@ export function MonthlyCalendar({ routine, onToggle, currentMonth, onMonthChange
               key={dayStr}
               onClick={() => onToggle(routine.id, dayStr)}
               className={`
-                aspect-square flex items-center justify-center rounded-full text-sm transition-all
+                aspect-square flex flex-col items-center justify-center rounded-full text-sm transition-all relative
                 ${!isCurrentMonth ? "text-muted-foreground/30" : "text-foreground"}
                 ${isCompleted ? "bg-primary text-primary-foreground font-bold shadow-sm shadow-primary/30" : "hover:bg-secondary font-medium"}
                 ${isToday && !isCompleted ? "border-2 border-primary/30 text-primary" : ""}
                 ${isCompleted && !isCurrentMonth ? "opacity-50" : ""}
               `}
+              title={routine.completedDetails?.[dayStr]}
             >
-              {format(day, "d")}
+              <span>{format(day, "d")}</span>
+              {routine.completedDetails?.[dayStr] && isCurrentMonth && (
+                <span className="absolute -bottom-1 text-[8px] max-w-full truncate px-1 text-primary-foreground/80 font-normal">
+                  {routine.completedDetails[dayStr]}
+                </span>
+              )}
             </button>
           );
         })}

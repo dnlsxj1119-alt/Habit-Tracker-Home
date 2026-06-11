@@ -5,7 +5,8 @@ import { ChevronRight, Check, GripVertical } from "lucide-react";
 interface Props {
   routine: Routine;
   selectedDateStr: string;
-  onToggle: (id: string, date: string) => void;
+  onToggle: (id: string, date: string, forceState?: boolean, subOption?: string) => void;
+  onOpenSubOptions?: (routine: Routine) => void;
   isDragging?: boolean;
   isDragOver?: boolean;
   onDragStart?: (e: React.DragEvent) => void;
@@ -33,6 +34,7 @@ export function RoutineCard({
   onDragOver,
   onDrop,
   onDragEnd,
+  onOpenSubOptions,
 }: Props) {
   const isCompleted = routine.completedDates.includes(selectedDateStr);
 
@@ -63,7 +65,11 @@ export function RoutineCard({
         data-testid={`button-toggle-${routine.id}`}
         onClick={(e) => {
           e.stopPropagation();
-          onToggle(routine.id, selectedDateStr);
+          if (routine.subOptions && routine.subOptions.length > 0 && onOpenSubOptions) {
+            onOpenSubOptions(routine);
+          } else {
+            onToggle(routine.id, selectedDateStr);
+          }
         }}
         onMouseDown={(e) => e.stopPropagation()}
         className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300
@@ -82,6 +88,11 @@ export function RoutineCard({
         }`}
       >
         {routine.name}
+        {routine.completedDetails?.[selectedDateStr] && (
+          <span className="ml-2 text-[11px] font-medium text-primary/80 bg-primary/10 px-1.5 py-0.5 rounded-md">
+            {routine.completedDetails[selectedDateStr]}
+          </span>
+        )}
       </span>
 
       {/* Category badge — right-aligned, before the chevron */}

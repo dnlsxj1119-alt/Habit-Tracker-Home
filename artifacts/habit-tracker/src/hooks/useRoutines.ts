@@ -20,13 +20,14 @@ export function useRoutines() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(routines));
   }, [routines]);
 
-  const addRoutine = useCallback((routine: Omit<Routine, "id" | "createdAt" | "completedDates">) => {
+  const addRoutine = useCallback((routine: Omit<Routine, "id" | "createdAt" | "completedDates" | "completedDetails">) => {
     setRoutines(prev => {
       const newRoutine: Routine = {
         ...routine,
         id: crypto.randomUUID(),
         createdAt: new Date().toISOString(),
         completedDates: [],
+        completedDetails: {},
       };
       const updated = [...prev, newRoutine];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -34,7 +35,7 @@ export function useRoutines() {
     });
   }, []);
 
-  const updateRoutine = useCallback((id: string, updates: Partial<Omit<Routine, "id" | "createdAt" | "completedDates">>) => {
+  const updateRoutine = useCallback((id: string, updates: Partial<Omit<Routine, "id" | "createdAt" | "completedDates" | "completedDetails">>) => {
     setRoutines(prev => {
       const updated = prev.map(r => r.id === id ? { ...r, ...updates } : r);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
@@ -50,16 +51,31 @@ export function useRoutines() {
     });
   }, []);
 
-  const toggleDate = useCallback((routineId: string, dateString: string) => {
+  const toggleDate = useCallback((routineId: string, dateString: string, forceState?: boolean, subOption?: string) => {
     setRoutines(prev => {
       const updated = prev.map(r => {
         if (r.id === routineId) {
-          const isCompleted = r.completedDates.includes(dateString);
+          const currentlyCompleted = r.completedDates.includes(dateString);
+          const willComplete = forceState !== undefined ? forceState : !currentlyCompleted;
+          
+          let newCompletedDates = r.completedDates;
+          if (willComplete && !currentlyCompleted) {
+            newCompletedDates = [...r.completedDates, dateString];
+          } else if (!willComplete && currentlyCompleted) {
+            newCompletedDates = r.completedDates.filter(d => d !== dateString);
+          }
+          
+          const newCompletedDetails = { ...r.completedDetails };
+          if (!willComplete) {
+            delete newCompletedDetails[dateString];
+          } else if (subOption) {
+            newCompletedDetails[dateString] = subOption;
+          }
+
           return {
             ...r,
-            completedDates: isCompleted 
-              ? r.completedDates.filter(d => d !== dateString)
-              : [...r.completedDates, dateString]
+            completedDates: newCompletedDates,
+            completedDetails: newCompletedDetails
           };
         }
         return r;

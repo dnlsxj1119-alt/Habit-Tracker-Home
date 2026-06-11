@@ -17,6 +17,7 @@ const formSchema = z.object({
   category: z.string().min(1, "카테고리를 선택해주세요"),
   goal: z.string().optional(),
   memo: z.string().optional(),
+  subOptions: z.array(z.string()).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -25,7 +26,7 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   routine?: Routine;
-  onSave: (data: Omit<Routine, "id" | "createdAt" | "completedDates">) => void;
+  onSave: (data: Omit<Routine, "id" | "createdAt" | "completedDates" | "completedDetails">) => void;
 }
 
 export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
@@ -41,6 +42,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
       category: routine?.category || categories[0],
       goal: routine?.goal || "",
       memo: routine?.memo || "",
+      subOptions: routine?.subOptions || [],
     },
   });
 
@@ -50,6 +52,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
       category: values.category,
       goal: values.goal || "",
       memo: values.memo || "",
+      subOptions: values.subOptions?.filter(o => o.trim().length > 0),
     });
     onOpenChange(false);
     if (!routine) form.reset();
@@ -200,6 +203,51 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
                       className="rounded-xl bg-secondary/50 border-none h-12 focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background"
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* SubOptions */}
+            <FormField
+              control={form.control}
+              name="subOptions"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-semibold">하위 선택지 (선택)</FormLabel>
+                  <div className="space-y-2">
+                    {field.value?.map((option, index) => (
+                      <div key={index} className="flex gap-2 items-center">
+                        <Input
+                          value={option}
+                          onChange={(e) => {
+                            const newOptions = [...(field.value || [])];
+                            newOptions[index] = e.target.value;
+                            field.onChange(newOptions);
+                          }}
+                          placeholder={`선택지 ${index + 1}`}
+                          className="rounded-xl bg-secondary/50 border-none h-12 focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background flex-1"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newOptions = field.value?.filter((_, i) => i !== index);
+                            field.onChange(newOptions);
+                          }}
+                          className="shrink-0 w-12 h-12 rounded-xl bg-secondary/50 flex items-center justify-center text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => field.onChange([...(field.value || []), ""])}
+                      className="w-full h-12 rounded-xl border border-dashed border-border flex items-center justify-center text-sm font-semibold text-muted-foreground hover:bg-secondary/50 hover:text-foreground transition-colors gap-2"
+                    >
+                      <Plus className="w-4 h-4" /> 선택지 추가
+                    </button>
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
