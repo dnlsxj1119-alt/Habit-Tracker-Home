@@ -3,7 +3,7 @@ import { Routine } from "@/types/routine";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { useState, useEffect } from "react";
-import { Check } from "lucide-react";
+import { Check, CheckSquare, Square } from "lucide-react";
 
 interface Props {
   open: boolean;
@@ -76,36 +76,63 @@ export function SubOptionModal({ open, onOpenChange, routine, selectedDate, onSe
                   }
                 }}
                 className={`w-full py-3 px-4 rounded-xl text-sm font-bold transition-all flex items-center justify-between ${
-                  isSelected
+                  isSelected && !isMulti
                     ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    : isSelected && isMulti
+                    ? "bg-secondary border-primary text-primary shadow-sm shadow-primary/10 border-2"
                     : "bg-secondary text-foreground hover:bg-secondary/80 border border-border"
                 }`}
               >
-                <span>{option}</span>
-                {isMulti && isSelected && <Check className="w-4 h-4" />}
+                <div className="flex items-center gap-3">
+                  {isMulti && (
+                    isSelected ? <CheckSquare className="w-5 h-5" /> : <Square className="w-5 h-5 text-muted-foreground/50" />
+                  )}
+                  <span>{option}</span>
+                </div>
+                {!isMulti && isSelected && <Check className="w-4 h-4" />}
               </button>
             );
           })}
           
           {isMulti && (
-            <div className="mt-2">
+            <div className="mt-4">
               {error && <p className="text-xs text-destructive text-center mb-2">{error}</p>}
-              <button
-                onClick={handleConfirmMulti}
-                className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
-              >
-                완료
-              </button>
+              <div className="flex gap-2">
+                {isCompleted ? (
+                  <button
+                    onClick={() => {
+                      onSelectOption(routine.id, dateStr, false);
+                      onOpenChange(false);
+                    }}
+                    className="flex-1 py-3 px-4 rounded-xl text-sm font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all border border-destructive/20"
+                  >
+                    완료 취소
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => onOpenChange(false)}
+                    className="flex-1 py-3 px-4 rounded-xl text-sm font-bold bg-secondary text-muted-foreground hover:bg-secondary/80 transition-all border border-border"
+                  >
+                    취소
+                  </button>
+                )}
+                <button
+                  onClick={handleConfirmMulti}
+                  className="flex-1 py-3 px-4 rounded-xl text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
+                >
+                  완료
+                </button>
+              </div>
             </div>
           )}
 
-          {isCompleted && (
+          {!isMulti && isCompleted && (
             <button
               onClick={() => {
                 onSelectOption(routine.id, dateStr, false);
                 onOpenChange(false);
               }}
-              className="w-full py-3 px-4 mt-2 rounded-xl text-sm font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all border border-destructive/20"
+              className="w-full py-3 px-4 mt-4 rounded-xl text-sm font-bold bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all border border-destructive/20"
             >
               완료 취소
             </button>
