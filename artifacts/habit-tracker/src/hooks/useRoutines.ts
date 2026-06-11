@@ -8,7 +8,12 @@ export function useRoutines() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        // Migration: ensure existing routines with subOptions have a subOptionType
+        return parsed.map((r: any) => ({
+          ...r,
+          subOptionType: r.subOptionType || (r.subOptions && r.subOptions.length > 0 ? "single" : undefined)
+        }));
       }
     } catch (e) {
       console.error("Failed to load routines from localStorage", e);
