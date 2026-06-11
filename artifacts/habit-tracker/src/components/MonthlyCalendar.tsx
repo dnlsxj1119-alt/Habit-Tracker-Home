@@ -25,28 +25,28 @@ export function MonthlyCalendar({ routine, onToggle, currentMonth, onMonthChange
   const prevMonth = () => onMonthChange(subMonths(currentMonth, 1));
 
   return (
-    <div className="bg-card rounded-3xl p-5 shadow-sm border border-border">
-      <div className="flex justify-between items-center mb-6">
-        <button onClick={prevMonth} className="p-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors">
+    <div className="bg-card rounded-[20px] p-4 shadow-sm border border-border">
+      <div className="flex justify-between items-center mb-3">
+        <button onClick={prevMonth} className="p-1 rounded-full hover:bg-secondary text-muted-foreground transition-colors">
           <ChevronLeft className="w-5 h-5" />
         </button>
-        <span className="font-bold text-lg">
+        <span className="font-bold text-base">
           {format(currentMonth, "MMMM yyyy", { locale: ko })}
         </span>
-        <button onClick={nextMonth} className="p-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors">
+        <button onClick={nextMonth} className="p-1 rounded-full hover:bg-secondary text-muted-foreground transition-colors">
           <ChevronRight className="w-5 h-5" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 mb-2">
+      <div className="grid grid-cols-7 gap-1 mb-1.5">
         {weekDays.map(day => (
-          <div key={day} className="text-center text-xs font-bold text-muted-foreground pb-2">
+          <div key={day} className="text-center text-[11px] font-bold text-muted-foreground pb-1">
             {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-y-2 gap-x-1">
+      <div className="grid grid-cols-7 gap-y-1 gap-x-1">
         {days.map(day => {
           const dayStr = format(day, dateFormat);
           const isCompleted = routine.completedDates.includes(dayStr);
@@ -61,7 +61,7 @@ export function MonthlyCalendar({ routine, onToggle, currentMonth, onMonthChange
               key={dayStr}
               onClick={() => onToggle(routine.id, dayStr)}
               className={`
-                aspect-square flex flex-col items-center justify-center rounded-full text-sm transition-all relative
+                h-9 w-full flex flex-col items-center justify-center rounded-[12px] text-sm transition-all relative
                 ${!isCurrentMonth ? "text-muted-foreground/30" : "text-foreground"}
                 ${isCompleted ? "bg-primary text-primary-foreground font-bold shadow-sm shadow-primary/30" : "hover:bg-secondary font-medium"}
                 ${isToday && !isCompleted ? "border-2 border-primary/30 text-primary" : ""}

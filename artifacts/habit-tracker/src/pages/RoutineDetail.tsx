@@ -92,12 +92,12 @@ export default function RoutineDetail() {
         </div>
       </header>
 
-      <main className="flex-1 px-6 pt-6 flex flex-col gap-8">
+      <main className="flex-1 px-5 pt-4 flex flex-col gap-5">
         <div>
           {routine.category && (
-            <span className="text-xs font-extrabold tracking-wider text-primary uppercase mb-3 block">{routine.category}</span>
+            <span className="text-[10px] font-extrabold tracking-wider text-primary uppercase mb-2 block">{routine.category}</span>
           )}
-          <h1 className="text-3xl font-extrabold mb-5 text-foreground leading-tight">{routine.name}</h1>
+          <h1 className="text-2xl font-extrabold mb-3 text-foreground leading-tight">{routine.name}</h1>
           
           {(routine.goal || routine.memo) && (
             <div className="bg-secondary/40 rounded-3xl p-5 space-y-4 border border-border/50">
@@ -124,15 +124,17 @@ export default function RoutineDetail() {
           onMonthChange={setCurrentMonth}
         />
 
-        <div className="bg-primary/5 border border-primary/20 rounded-3xl p-6 shadow-sm">
-          <div className="flex justify-between items-end mb-4">
-            <h3 className="text-sm font-bold text-primary">{monthLabel} 완료율</h3>
-            <span className="text-3xl font-extrabold text-primary tracking-tighter">{completionRate}%</span>
+        <div className="bg-primary/5 border border-primary/20 rounded-[20px] p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-baseline gap-2">
+              <h3 className="text-sm font-bold text-primary">{monthLabel} 완료율</h3>
+              <p className="text-[10px] font-semibold text-primary/70">
+                ({daysInMonth}일 중 {completedInMonth.length}일)
+              </p>
+            </div>
+            <span className="text-2xl font-extrabold text-primary tracking-tighter">{completionRate}%</span>
           </div>
-          <Progress value={completionRate} className="h-4 rounded-full bg-primary/20" />
-          <p className="text-xs font-semibold text-primary/70 mt-3 text-right">
-            {daysInMonth}일 중 {completedInMonth.length}일 완료
-          </p>
+          <Progress value={completionRate} className="h-3 rounded-full bg-primary/20" />
         </div>
 
         {hasSubOptionsStats && (
