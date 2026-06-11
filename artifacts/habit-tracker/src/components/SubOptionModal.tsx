@@ -19,10 +19,12 @@ export function SubOptionModal({ open, onOpenChange, routine, selectedDate, onSe
   const initialSelected = Array.isArray(currentOption) ? currentOption : (currentOption ? [currentOption] : []);
   
   const [selectedMulti, setSelectedMulti] = useState<string[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (open) {
       setSelectedMulti(initialSelected);
+      setError("");
     }
   }, [open, currentOption]);
 
@@ -31,17 +33,18 @@ export function SubOptionModal({ open, onOpenChange, routine, selectedDate, onSe
   const isMulti = routine.subOptionType === "multi";
 
   const handleToggleMulti = (option: string) => {
+    setError("");
     setSelectedMulti(prev => 
       prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
     );
   };
 
   const handleConfirmMulti = () => {
-    if (selectedMulti.length > 0) {
-      onSelectOption(routine.id, dateStr, true, selectedMulti);
-    } else {
-      onSelectOption(routine.id, dateStr, false);
+    if (selectedMulti.length === 0) {
+      setError("하나 이상 선택해주세요.");
+      return;
     }
+    onSelectOption(routine.id, dateStr, true, selectedMulti);
     onOpenChange(false);
   };
 
@@ -85,15 +88,18 @@ export function SubOptionModal({ open, onOpenChange, routine, selectedDate, onSe
           })}
           
           {isMulti && (
-            <button
-              onClick={handleConfirmMulti}
-              className="w-full py-3 px-4 mt-2 rounded-xl text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
-            >
-              선택 완료
-            </button>
+            <div className="mt-2">
+              {error && <p className="text-xs text-destructive text-center mb-2">{error}</p>}
+              <button
+                onClick={handleConfirmMulti}
+                className="w-full py-3 px-4 rounded-xl text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-md shadow-primary/20"
+              >
+                완료
+              </button>
+            </div>
           )}
 
-          {isCompleted && !isMulti && (
+          {isCompleted && (
             <button
               onClick={() => {
                 onSelectOption(routine.id, dateStr, false);
