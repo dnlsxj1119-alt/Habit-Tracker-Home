@@ -185,8 +185,11 @@
   }
 }
 
-/* Theme Colors for Achievement Calendar */
+/* Theme Colors for Achievement Calendar & App Primary Color */
 :root[data-theme="blue"] {
+  --primary: 217 91% 60%;
+  --ring: 217 91% 60%;
+  --chart-1: 217 91% 60%;
   --theme-l1: theme('colors.blue.200');
   --theme-l2: theme('colors.blue.400');
   --theme-l3: theme('colors.blue.600');
@@ -194,6 +197,9 @@
 }
 
 :root[data-theme="green"] {
+  --primary: 142 71% 45%;
+  --ring: 142 71% 45%;
+  --chart-1: 142 71% 45%;
   --theme-l1: theme('colors.green.200');
   --theme-l2: theme('colors.green.400');
   --theme-l3: theme('colors.green.600');
@@ -201,6 +207,9 @@
 }
 
 :root[data-theme="purple"] {
+  --primary: 271 91% 65%;
+  --ring: 271 91% 65%;
+  --chart-1: 271 91% 65%;
   --theme-l1: theme('colors.purple.200');
   --theme-l2: theme('colors.purple.400');
   --theme-l3: theme('colors.purple.600');
@@ -208,6 +217,9 @@
 }
 
 :root[data-theme="pink"] {
+  --primary: 330 81% 60%;
+  --ring: 330 81% 60%;
+  --chart-1: 330 81% 60%;
   --theme-l1: theme('colors.pink.200');
   --theme-l2: theme('colors.pink.400');
   --theme-l3: theme('colors.pink.600');
@@ -215,6 +227,9 @@
 }
 
 :root[data-theme="orange"] {
+  --primary: 25 95% 53%;
+  --ring: 25 95% 53%;
+  --chart-1: 25 95% 53%;
   --theme-l1: theme('colors.orange.200');
   --theme-l2: theme('colors.orange.400');
   --theme-l3: theme('colors.orange.600');
@@ -222,6 +237,9 @@
 }
 
 .dark:root[data-theme="blue"] {
+  --primary: 217 91% 60%;
+  --ring: 217 91% 60%;
+  --chart-1: 217 91% 60%;
   --theme-l1: theme('colors.blue.900');
   --theme-l2: theme('colors.blue.700');
   --theme-l3: theme('colors.blue.500');
@@ -229,6 +247,9 @@
 }
 
 .dark:root[data-theme="green"] {
+  --primary: 142 71% 45%;
+  --ring: 142 71% 45%;
+  --chart-1: 142 71% 45%;
   --theme-l1: theme('colors.green.900');
   --theme-l2: theme('colors.green.700');
   --theme-l3: theme('colors.green.500');
@@ -236,6 +257,9 @@
 }
 
 .dark:root[data-theme="purple"] {
+  --primary: 271 91% 65%;
+  --ring: 271 91% 65%;
+  --chart-1: 271 91% 65%;
   --theme-l1: theme('colors.purple.900');
   --theme-l2: theme('colors.purple.700');
   --theme-l3: theme('colors.purple.500');
@@ -243,6 +267,9 @@
 }
 
 .dark:root[data-theme="pink"] {
+  --primary: 330 81% 60%;
+  --ring: 330 81% 60%;
+  --chart-1: 330 81% 60%;
   --theme-l1: theme('colors.pink.900');
   --theme-l2: theme('colors.pink.700');
   --theme-l3: theme('colors.pink.500');
@@ -250,6 +277,9 @@
 }
 
 .dark:root[data-theme="orange"] {
+  --primary: 25 95% 53%;
+  --ring: 25 95% 53%;
+  --chart-1: 25 95% 53%;
   --theme-l1: theme('colors.orange.900');
   --theme-l2: theme('colors.orange.700');
   --theme-l3: theme('colors.orange.500');

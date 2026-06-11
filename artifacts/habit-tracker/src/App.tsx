@@ -8,7 +8,11 @@ import Settings from "@/pages/Settings";
 import NotFound from "@/pages/not-found";
 import { BottomNav } from "@/components/BottomNav";
 
+import { useSettings } from "@/hooks/useSettings";
+
 function Router() {
+  useSettings(); // Initialize theme on app load
+
   return (
     <>
       <Switch>
