@@ -88,11 +88,6 @@ export function RoutineCard({
         }`}
       >
         {routine.name}
-        {routine.completedDetails?.[selectedDateStr] && (
-          <span className="ml-2 text-[11px] font-medium text-primary/80 bg-primary/10 px-1.5 py-0.5 rounded-md">
-            {routine.completedDetails[selectedDateStr]}
-          </span>
-        )}
       </span>
 
       {/* Category badge — right-aligned, before the chevron */}

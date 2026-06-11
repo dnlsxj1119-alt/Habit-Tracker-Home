@@ -147,6 +147,23 @@ export default function RoutineDetail() {
             </div>
           </div>
         )}
+
+        {completedInMonth.length > 0 && (
+          <div className="bg-secondary/20 border border-border/40 rounded-3xl p-6 shadow-sm">
+            <h3 className="text-sm font-bold text-foreground mb-4">{monthLabel} 상세 기록</h3>
+            <div className="space-y-2">
+              {[...completedInMonth]
+                .sort((a, b) => b.localeCompare(a))
+                .map(dateStr => (
+                <div key={dateStr} className="flex flex-col bg-background px-4 py-3 rounded-xl border border-border/30">
+                  <span className="font-semibold text-sm text-foreground">
+                    {dateStr} {routine.name} {routine.completedDetails?.[dateStr] ? `(${routine.completedDetails[dateStr]})` : ''}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
 
       <RoutineForm 
