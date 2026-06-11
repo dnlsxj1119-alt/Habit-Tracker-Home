@@ -12,7 +12,7 @@ export function useRoutines() {
         // Migration: ensure existing routines with subOptions have a subOptionType
         return parsed.map((r: any) => ({
           ...r,
-          subOptionType: r.subOptionType || (r.subOptions && r.subOptions.length > 0 ? "single" : undefined)
+          subOptionType: r.subOptionType || (r.subOptions && r.subOptions.length > 0 ? "multi" : undefined)
         }));
       }
     } catch (e) {

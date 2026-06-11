@@ -44,7 +44,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
       goal: routine?.goal || "",
       memo: routine?.memo || "",
       subOptions: routine?.subOptions || [],
-      subOptionType: routine?.subOptionType || "single",
+      subOptionType: routine?.subOptionType || (routine?.subOptions && routine.subOptions.length > 0 ? "multi" : "single"),
     },
   });
 
@@ -55,7 +55,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
       goal: values.goal || "",
       memo: values.memo || "",
       subOptions: values.subOptions?.filter(o => o.trim().length > 0),
-      subOptionType: values.subOptionType || "single",
+      subOptionType: values.subOptionType || (values.subOptions && values.subOptions.length > 0 ? "multi" : "single"),
     });
     onOpenChange(false);
     if (!routine) form.reset();
