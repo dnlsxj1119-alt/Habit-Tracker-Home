@@ -51,7 +51,7 @@ export function useRoutines() {
     });
   }, []);
 
-  const toggleDate = useCallback((routineId: string, dateString: string, forceState?: boolean, subOption?: string) => {
+  const toggleDate = useCallback((routineId: string, dateString: string, forceState?: boolean, subOption?: string | string[]) => {
     setRoutines(prev => {
       const updated = prev.map(r => {
         if (r.id === routineId) {

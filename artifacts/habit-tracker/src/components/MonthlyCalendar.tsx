@@ -53,6 +53,9 @@ export function MonthlyCalendar({ routine, onToggle, currentMonth, onMonthChange
           const isToday = isSameDay(day, new Date());
           const isCurrentMonth = isSameMonth(day, monthStart);
 
+          const detail = routine.completedDetails?.[dayStr];
+          const detailStr = detail ? (Array.isArray(detail) ? detail.join(", ") : detail) : null;
+
           return (
             <button
               key={dayStr}
@@ -64,12 +67,12 @@ export function MonthlyCalendar({ routine, onToggle, currentMonth, onMonthChange
                 ${isToday && !isCompleted ? "border-2 border-primary/30 text-primary" : ""}
                 ${isCompleted && !isCurrentMonth ? "opacity-50" : ""}
               `}
-              title={routine.completedDetails?.[dayStr]}
+              title={detailStr ?? undefined}
             >
               <span>{format(day, "d")}</span>
-              {routine.completedDetails?.[dayStr] && isCurrentMonth && (
+              {detailStr && isCurrentMonth && (
                 <span className="absolute -bottom-1 text-[8px] max-w-full truncate px-1 text-primary-foreground/80 font-normal">
-                  {routine.completedDetails[dayStr]}
+                  {detailStr}
                 </span>
               )}
             </button>

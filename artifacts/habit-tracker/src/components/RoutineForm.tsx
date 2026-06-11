@@ -18,6 +18,7 @@ const formSchema = z.object({
   goal: z.string().optional(),
   memo: z.string().optional(),
   subOptions: z.array(z.string()).optional(),
+  subOptionType: z.enum(["single", "multi"]).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -43,6 +44,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
       goal: routine?.goal || "",
       memo: routine?.memo || "",
       subOptions: routine?.subOptions || [],
+      subOptionType: routine?.subOptionType || "single",
     },
   });
 
@@ -53,6 +55,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
       goal: values.goal || "",
       memo: values.memo || "",
       subOptions: values.subOptions?.filter(o => o.trim().length > 0),
+      subOptionType: values.subOptionType || "single",
     });
     onOpenChange(false);
     if (!routine) form.reset();
@@ -214,7 +217,33 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
               name="subOptions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold">하위 선택지 (선택)</FormLabel>
+                  <div className="flex justify-between items-center mb-2">
+                    <FormLabel className="text-sm font-semibold">하위 선택지 (선택)</FormLabel>
+                    {field.value && field.value.length > 0 && (
+                      <FormField
+                        control={form.control}
+                        name="subOptionType"
+                        render={({ field: typeField }) => (
+                          <div className="flex bg-secondary rounded-lg p-1">
+                            <button
+                              type="button"
+                              onClick={() => typeField.onChange("single")}
+                              className={`px-3 py-1 text-[10px] font-bold rounded-md transition-colors ${typeField.value === "single" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"}`}
+                            >
+                              단일 선택
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => typeField.onChange("multi")}
+                              className={`px-3 py-1 text-[10px] font-bold rounded-md transition-colors ${typeField.value === "multi" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground"}`}
+                            >
+                              중복 선택
+                            </button>
+                          </div>
+                        )}
+                      />
+                    )}
+                  </div>
                   <div className="space-y-2">
                     {field.value?.map((option, index) => (
                       <div key={index} className="flex gap-2 items-center">

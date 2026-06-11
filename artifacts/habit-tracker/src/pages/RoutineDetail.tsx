@@ -60,7 +60,10 @@ export default function RoutineDetail() {
   completedInMonth.forEach(dateStr => {
     const option = routine.completedDetails?.[dateStr];
     if (option) {
-      subOptionCounts[option] = (subOptionCounts[option] || 0) + 1;
+      const optionsArray = Array.isArray(option) ? option : [option];
+      optionsArray.forEach(opt => {
+        subOptionCounts[opt] = (subOptionCounts[opt] || 0) + 1;
+      });
     }
   });
   const hasSubOptionsStats = Object.keys(subOptionCounts).length > 0;
@@ -157,7 +160,7 @@ export default function RoutineDetail() {
                 .map(dateStr => (
                 <div key={dateStr} className="flex flex-col bg-background px-4 py-3 rounded-xl border border-border/30">
                   <span className="font-semibold text-sm text-foreground">
-                    {dateStr} {routine.name} {routine.completedDetails?.[dateStr] ? `(${routine.completedDetails[dateStr]})` : ''}
+                    {dateStr} {routine.name} {routine.completedDetails?.[dateStr] ? `(${Array.isArray(routine.completedDetails[dateStr]) ? (routine.completedDetails[dateStr] as string[]).join(", ") : routine.completedDetails[dateStr]})` : ''}
                   </span>
                 </div>
               ))}

@@ -5,11 +5,10 @@ import { restoreFromLocalStorageIfEmpty } from './db/dexie';
 
 import Settings from './pages/Settings';
 
-// Placeholders for pages
-const Home = () => <div className="page-container"><h1 className="title">홈</h1><div className="card">오늘의 습관을 체크하세요.</div></div>;
-const Calendar = () => <div className="page-container"><h1 className="title">달력</h1><div className="card">날짜별 완료 기록입니다.</div></div>;
-const History = () => <div className="page-container"><h1 className="title">기록</h1><div className="card">수행한 활동 내역입니다.</div></div>;
-const Statistics = () => <div className="page-container"><h1 className="title">통계</h1><div className="card">완료 횟수 및 통계입니다.</div></div>;
+import Home from './pages/Home';
+import Calendar from './pages/Calendar';
+import History from './pages/History';
+import Statistics from './pages/Statistics';
 
 function App() {
   useEffect(() => {

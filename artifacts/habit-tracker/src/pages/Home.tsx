@@ -82,7 +82,7 @@ export default function Home() {
   }).filter(Boolean) as { cat: string; total: number; completed: number }[];
 
   return (
-    <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-16 flex flex-col font-sans">
+    <div className="min-h-[100dvh] bg-background w-full max-w-[430px] mx-auto shadow-2xl relative pb-28 flex flex-col font-sans">
       <header className="px-3 pt-8 pb-1 sticky top-0 bg-background/90 backdrop-blur-xl z-10 border-b border-border/40">
         {/* Month navigation — arrows flush with date bar edges */}
         <div className="flex items-center justify-between mb-0.5">
@@ -238,7 +238,7 @@ export default function Home() {
       <button
         onClick={() => setIsFormOpen(true)}
         data-testid="button-add-routine"
-        className="fixed bottom-5 right-1/2 w-12 h-12 bg-primary text-primary-foreground rounded-[16px] shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20"
+        className="fixed bottom-[84px] right-1/2 w-12 h-12 bg-primary text-primary-foreground rounded-[16px] shadow-xl shadow-primary/30 flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-20"
         style={{ transform: "translateX(calc(min(430px, 100vw)/2 - 3.5rem))" }}
       >
         <Plus className="w-5 h-5" />

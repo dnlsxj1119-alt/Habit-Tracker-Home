@@ -7,7 +7,8 @@ export type Routine = {
   createdAt: string;  // ISO date string
   completedDates: string[];  // Array of date strings like "2026-05-03"
   subOptions?: string[]; // Array of sub-option strings
-  completedDetails?: Record<string, string>; // Maps date string to selected sub-option
+  subOptionType?: "single" | "multi"; // Selection type
+  completedDetails?: Record<string, string | string[]>; // Maps date string to selected sub-option(s)
 };
 
 export const CATEGORIES = [

@@ -184,3 +184,74 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* Theme Colors for Achievement Calendar */
+:root[data-theme="blue"] {
+  --theme-l1: theme('colors.blue.200');
+  --theme-l2: theme('colors.blue.400');
+  --theme-l3: theme('colors.blue.600');
+  --theme-l4: theme('colors.blue.800');
+}
+
+:root[data-theme="green"] {
+  --theme-l1: theme('colors.green.200');
+  --theme-l2: theme('colors.green.400');
+  --theme-l3: theme('colors.green.600');
+  --theme-l4: theme('colors.green.800');
+}
+
+:root[data-theme="purple"] {
+  --theme-l1: theme('colors.purple.200');
+  --theme-l2: theme('colors.purple.400');
+  --theme-l3: theme('colors.purple.600');
+  --theme-l4: theme('colors.purple.800');
+}
+
+:root[data-theme="pink"] {
+  --theme-l1: theme('colors.pink.200');
+  --theme-l2: theme('colors.pink.400');
+  --theme-l3: theme('colors.pink.600');
+  --theme-l4: theme('colors.pink.800');
+}
+
+:root[data-theme="orange"] {
+  --theme-l1: theme('colors.orange.200');
+  --theme-l2: theme('colors.orange.400');
+  --theme-l3: theme('colors.orange.600');
+  --theme-l4: theme('colors.orange.800');
+}
+
+.dark:root[data-theme="blue"] {
+  --theme-l1: theme('colors.blue.900');
+  --theme-l2: theme('colors.blue.700');
+  --theme-l3: theme('colors.blue.500');
+  --theme-l4: theme('colors.blue.300');
+}
+
+.dark:root[data-theme="green"] {
+  --theme-l1: theme('colors.green.900');
+  --theme-l2: theme('colors.green.700');
+  --theme-l3: theme('colors.green.500');
+  --theme-l4: theme('colors.green.300');
+}
+
+.dark:root[data-theme="purple"] {
+  --theme-l1: theme('colors.purple.900');
+  --theme-l2: theme('colors.purple.700');
+  --theme-l3: theme('colors.purple.500');
+  --theme-l4: theme('colors.purple.300');
+}
+
+.dark:root[data-theme="pink"] {
+  --theme-l1: theme('colors.pink.900');
+  --theme-l2: theme('colors.pink.700');
+  --theme-l3: theme('colors.pink.500');
+  --theme-l4: theme('colors.pink.300');
+}
+
+.dark:root[data-theme="orange"] {
+  --theme-l1: theme('colors.orange.900');
+  --theme-l2: theme('colors.orange.700');
+  --theme-l3: theme('colors.orange.500');
+  --theme-l4: theme('colors.orange.300');
+}
