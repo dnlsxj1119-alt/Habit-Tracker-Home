@@ -253,6 +253,9 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
                             const newOptions = [...(field.value || [])];
                             newOptions[index] = e.target.value;
                             field.onChange(newOptions);
+                            if (form.getValues("subOptionType") !== "multi") {
+                              form.setValue("subOptionType", "multi");
+                            }
                           }}
                           placeholder={`선택지 ${index + 1}`}
                           className="rounded-xl bg-secondary/50 border-none h-12 focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-background flex-1"
@@ -271,7 +274,10 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
                     ))}
                     <button
                       type="button"
-                      onClick={() => field.onChange([...(field.value || []), ""])}
+                      onClick={() => {
+                        field.onChange([...(field.value || []), ""]);
+                        form.setValue("subOptionType", "multi");
+                      }}
                       className="w-full h-12 rounded-xl border border-dashed border-border flex items-center justify-center text-sm font-semibold text-muted-foreground hover:bg-secondary/50 hover:text-foreground transition-colors gap-2"
                     >
                       <Plus className="w-4 h-4" /> 선택지 추가
