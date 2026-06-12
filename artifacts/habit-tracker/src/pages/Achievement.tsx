@@ -82,18 +82,36 @@ export default function Achievement() {
             {days.map(day => {
               const isCurrentMonth = isSameMonth(day, monthStart);
               const level = getDayLevel(day);
+              
+              let completedStr = null;
+              if (level !== -1) {
+                const active = getActiveRoutines(day);
+                if (active.length > 0) {
+                  const dayStr = format(day, "yyyy-MM-dd");
+                  const completed = active.filter(r => r.completedDates.includes(dayStr)).length;
+                  completedStr = `${completed}/${active.length}`;
+                }
+              }
+
               return (
                 <button
                   key={day.toISOString()}
                   disabled={level === -1}
                   onClick={() => setSelectedDate(day)}
                   className={`
-                    aspect-square rounded-[8px] flex items-center justify-center text-xs font-bold transition-transform hover:scale-110
+                    aspect-square rounded-[8px] flex flex-col items-center justify-center transition-transform hover:scale-110
                     ${!isCurrentMonth ? "opacity-30" : ""}
                     ${getLevelClass(level)}
                   `}
                 >
-                  {format(day, "d")}
+                  <span className={`font-bold ${completedStr ? 'text-[11px] sm:text-xs leading-none mt-0.5' : 'text-xs'}`}>
+                    {format(day, "d")}
+                  </span>
+                  {completedStr && (
+                    <span className="text-[8px] sm:text-[9px] font-medium opacity-60 tracking-tighter leading-none mt-1">
+                      {completedStr}
+                    </span>
+                  )}
                 </button>
               );
             })}
