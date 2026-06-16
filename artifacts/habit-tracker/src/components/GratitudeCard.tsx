@@ -42,7 +42,6 @@ export function GratitudeCard({
   const isCompleted = routine.completedDates.includes(selectedDateStr);
   const hasText = text.trim().length > 0;
   
-  // Ref to handle auto-resize of textarea
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -52,21 +51,25 @@ export function GratitudeCard({
     }
   }, [text, isExpanded]);
 
-  useEffect(() => {
-    if (hasText && !isCompleted) {
-      onToggle(routine.id, selectedDateStr, true);
-    } else if (!hasText && isCompleted) {
-      onToggle(routine.id, selectedDateStr, false);
-    }
-  }, [hasText, isCompleted, routine.id, selectedDateStr, onToggle]);
-
   const toggleExpand = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsExpanded(prev => !prev);
   };
 
+  const handleToggleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggle(routine.id, selectedDateStr);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    saveEntry(selectedDateStr, e.target.value);
+    const val = e.target.value;
+    saveEntry(selectedDateStr, val);
+    
+    if (val.trim().length > 0 && !isCompleted) {
+      onToggle(routine.id, selectedDateStr, true);
+    } else if (val.trim().length === 0 && isCompleted) {
+      onToggle(routine.id, selectedDateStr, false);
+    }
   };
 
   return (
@@ -97,8 +100,9 @@ export function GratitudeCard({
           <GripVertical className="w-3.5 h-3.5" />
         </div>
 
-        {/* Completion toggle icon (visual only, driven by text) */}
-        <div
+        {/* Completion toggle icon */}
+        <button
+          onClick={handleToggleClick}
           className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300
             ${isCompleted
               ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
@@ -106,7 +110,7 @@ export function GratitudeCard({
             }`}
         >
           <Check className="w-3.5 h-3.5" />
-        </div>
+        </button>
 
         {/* Routine title */}
         <span

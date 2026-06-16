@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Routine } from "@/types/routine";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
+import { useGratitude } from "@/hooks/useGratitude";
 
 interface Props {
   open: boolean;
@@ -11,6 +12,8 @@ interface Props {
 }
 
 export function AchievementDetailModal({ open, onOpenChange, date, activeRoutines }: Props) {
+  const { entries } = useGratitude();
+
   if (!date) return null;
 
   const dateStr = format(date, "yyyy-MM-dd");
@@ -43,10 +46,18 @@ export function AchievementDetailModal({ open, onOpenChange, date, activeRoutine
                 {completedRoutines.map(r => (
                   <div key={r.id} className="bg-primary/10 px-4 py-3 rounded-xl border border-primary/20 flex flex-col">
                     <span className="font-semibold text-sm text-foreground">{r.name}</span>
-                    {r.completedDetails?.[dateStr] && (
-                      <span className="text-xs font-medium text-primary mt-1">
-                        ↳ {Array.isArray(r.completedDetails[dateStr]) ? (r.completedDetails[dateStr] as string[]).join(", ") : r.completedDetails[dateStr]}
-                      </span>
+                    {r.type === "gratitude" ? (
+                      entries[dateStr] && (
+                        <span className="text-xs font-medium text-primary mt-1 line-clamp-2">
+                          ↳ {entries[dateStr]}
+                        </span>
+                      )
+                    ) : (
+                      r.completedDetails?.[dateStr] && (
+                        <span className="text-xs font-medium text-primary mt-1">
+                          ↳ {Array.isArray(r.completedDetails[dateStr]) ? (r.completedDetails[dateStr] as string[]).join(", ") : r.completedDetails[dateStr]}
+                        </span>
+                      )
                     )}
                   </div>
                 ))}
