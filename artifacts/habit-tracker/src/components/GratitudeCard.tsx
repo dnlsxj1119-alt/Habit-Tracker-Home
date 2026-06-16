@@ -144,7 +144,7 @@ export function GratitudeCard({
         style={{ display: "grid" }}
       >
         <div className="overflow-hidden">
-          <div className="px-3 pb-3 pt-0">
+          <div className="px-3 pb-3 pt-0 flex flex-col gap-2">
             <textarea
               ref={textareaRef}
               value={text}
@@ -153,6 +153,17 @@ export function GratitudeCard({
               className="w-full min-h-[80px] bg-secondary/30 rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-primary/30 border border-transparent focus:border-primary/20 resize-none transition-shadow text-foreground placeholder:text-muted-foreground/50"
               onClick={(e) => e.stopPropagation()}
             />
+            <div className="flex justify-end">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsExpanded(false);
+                }}
+                className="text-xs font-bold bg-secondary text-foreground hover:bg-secondary/80 px-4 py-2 rounded-lg transition-colors border border-border shadow-sm"
+              >
+                완료
+              </button>
+            </div>
           </div>
         </div>
       </div>
