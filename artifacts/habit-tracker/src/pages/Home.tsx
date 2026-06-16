@@ -6,6 +6,7 @@ import { useRoutines } from "@/hooks/useRoutines";
 import { useCategories } from "@/hooks/useCategories";
 import { WeeklyDateBar } from "@/components/WeeklyDateBar";
 import { RoutineCard } from "@/components/RoutineCard";
+import { GratitudeCard } from "@/components/GratitudeCard";
 import { RoutineForm } from "@/components/RoutineForm";
 import { HomeCalendarModal } from "@/components/HomeCalendarModal";
 import { SubOptionModal } from "@/components/SubOptionModal";
@@ -170,7 +171,7 @@ export default function Home() {
               return (
                 <button
                   key={cat}
-                  onClick={() => setSelectedCategory(cat as Category)}
+                  onClick={() => setSelectedCategory(cat)}
                   data-testid={`button-chip-${cat}`}
                   className={`shrink-0 flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full border transition-all
                     ${isActive
@@ -215,21 +216,39 @@ export default function Home() {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {filteredRoutines.map((routine) => (
-              <RoutineCard
-                key={routine.id}
-                routine={routine}
-                selectedDateStr={selectedDateStr}
-                onToggle={toggleDate}
-                isDragging={draggingId === routine.id}
-                isDragOver={dragOverId === routine.id}
-                onDragStart={handleDragStart(routine.id)}
-                onDragOver={handleDragOver(routine.id)}
-                onDrop={handleDrop(routine.id)}
-                onDragEnd={handleDragEnd}
-                onOpenSubOptions={setSelectedRoutineForSubOption}
-              />
-            ))}
+            {filteredRoutines.map((routine) => {
+              if (routine.type === "gratitude") {
+                return (
+                  <GratitudeCard
+                    key={routine.id}
+                    routine={routine}
+                    selectedDateStr={selectedDateStr}
+                    onToggle={toggleDate}
+                    isDragging={draggingId === routine.id}
+                    isDragOver={dragOverId === routine.id}
+                    onDragStart={handleDragStart(routine.id)}
+                    onDragOver={handleDragOver(routine.id)}
+                    onDrop={handleDrop(routine.id)}
+                    onDragEnd={handleDragEnd}
+                  />
+                );
+              }
+              return (
+                <RoutineCard
+                  key={routine.id}
+                  routine={routine}
+                  selectedDateStr={selectedDateStr}
+                  onToggle={toggleDate}
+                  isDragging={draggingId === routine.id}
+                  isDragOver={dragOverId === routine.id}
+                  onDragStart={handleDragStart(routine.id)}
+                  onDragOver={handleDragOver(routine.id)}
+                  onDrop={handleDrop(routine.id)}
+                  onDragEnd={handleDragEnd}
+                  onOpenSubOptions={setSelectedRoutineForSubOption}
+                />
+              );
+            })}
           </div>
         )}
       </main>

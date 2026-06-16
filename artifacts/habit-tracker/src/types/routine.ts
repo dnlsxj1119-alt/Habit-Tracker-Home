@@ -9,6 +9,7 @@ export type Routine = {
   subOptions?: string[]; // Array of sub-option strings
   subOptionType?: "single" | "multi"; // Selection type
   completedDetails?: Record<string, string | string[]>; // Maps date string to selected sub-option(s)
+  type?: "habit" | "gratitude"; // Habit or Gratitude Journal
 };
 
 export const CATEGORIES = [

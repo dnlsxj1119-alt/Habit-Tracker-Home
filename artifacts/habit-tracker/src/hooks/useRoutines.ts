@@ -7,14 +7,30 @@ export function useRoutines() {
   const [routines, setRoutines] = useState<Routine[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
+      let loaded: Routine[] = [];
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Migration: ensure existing routines with subOptions have a subOptionType
-        return parsed.map((r: any) => ({
+        loaded = parsed.map((r: any) => ({
           ...r,
           subOptionType: r.subOptionType || (r.subOptions && r.subOptions.length > 0 ? "multi" : undefined)
         }));
       }
+
+      // Migration: ensure Gratitude Routine exists
+      if (!loaded.find((r) => r.type === "gratitude")) {
+        loaded.push({
+          id: "gratitude-default-id",
+          name: "감사일기 작성",
+          category: "마음",
+          goal: "매일 감사한 일 기록하기",
+          memo: "작은 감사함이 모여 행복을 만듭니다.",
+          createdAt: new Date().toISOString(),
+          completedDates: [],
+          type: "gratitude",
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+      }
+      return loaded;
     } catch (e) {
       console.error("Failed to load routines from localStorage", e);
     }
