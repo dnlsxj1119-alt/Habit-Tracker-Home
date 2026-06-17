@@ -88,8 +88,8 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) handleCancelAdd(); }}>
-      <DialogContent className="sm:max-w-md w-[90%] rounded-[24px] bg-background border-border p-6" aria-describedby="routine-form-description">
-        <DialogHeader className="mb-2">
+      <DialogContent className="sm:max-w-md w-[90%] max-h-[90dvh] flex flex-col gap-0 rounded-[24px] bg-background border-border p-0 overflow-hidden" aria-describedby="routine-form-description">
+        <DialogHeader className="p-6 pb-4 shrink-0">
           <DialogTitle className="text-xl font-bold">{routine ? "루틴 수정" : "새 루틴 만들기"}</DialogTitle>
           <DialogDescription id="routine-form-description" className="sr-only">
             루틴의 이름, 카테고리, 목표 및 메모를 설정합니다.
@@ -97,7 +97,8 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden min-h-0">
+            <div className="flex-1 overflow-y-auto px-6 space-y-4" style={{ WebkitOverflowScrolling: "touch" }}>
             {/* Name */}
             <FormField
               control={form.control}
@@ -293,7 +294,7 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
               control={form.control}
               name="memo"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="pb-4">
                   <FormLabel className="text-sm font-semibold">메모 (선택)</FormLabel>
                   <FormControl>
                     <Textarea
@@ -306,12 +307,13 @@ export function RoutineForm({ open, onOpenChange, routine, onSave }: Props) {
                 </FormItem>
               )}
             />
+            </div>
 
-            <DialogFooter className="mt-6 flex gap-3 flex-row pb-2">
-              <Button type="button" variant="secondary" onClick={() => onOpenChange(false)} className="flex-1 rounded-xl h-12 font-semibold">
+            <DialogFooter className="p-6 pt-4 shrink-0 bg-background sticky bottom-0 flex gap-3 flex-row" style={{ paddingBottom: "calc(1.5rem + env(safe-area-inset-bottom))" }}>
+              <Button type="button" variant="secondary" onClick={() => onOpenChange(false)} className="flex-1 rounded-xl h-12 font-semibold m-0 mt-0">
                 취소
               </Button>
-              <Button type="submit" className="flex-1 rounded-xl h-12 font-bold shadow-md shadow-primary/20">
+              <Button type="submit" className="flex-1 rounded-xl h-12 font-bold shadow-md shadow-primary/20 m-0 mt-0">
                 저장
               </Button>
             </DialogFooter>
